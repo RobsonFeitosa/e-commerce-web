@@ -36,6 +36,17 @@ export const Container = styled.div`
     z-index: 3;
     display: block;
   }
+
+  .act .favorite-float-up,
+  .act .cart-float-up {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .act button.favorite-wp > svg,
+  .act button > div > svg {
+    color: #ffffffdd;
+  }
 `;
 
 export const WrapperHead = styled.div`
@@ -85,6 +96,7 @@ export const HeadNav = styled.div`
   }
 
   > div > a,
+  > div .favorite-wp,
   > div .cart-wp {
     background: transparent;
     border: 0;
@@ -94,6 +106,10 @@ export const HeadNav = styled.div`
     align-items: center;
 
     text-decoration: none;
+
+    &.act svg {
+      color: #ffffff;
+    }
 
     svg {
       margin-left: 10px;

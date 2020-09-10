@@ -1,6 +1,17 @@
 import styled from 'styled-components';
 
-export const Container = styled.header``;
+export const Container = styled.header`
+  .favorite-float-head.act .favorite-float-up,
+  .cart-float-head.act .cart-float-up {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .favorite-float-head.act button.favorite-wp > svg,
+  .cart-float-head.act button > div > svg {
+    color: #ffffffdd;
+  }
+`;
 
 export const WrapperHead = styled.div`
   background: #002357;
@@ -170,6 +181,7 @@ export const HeadNav = styled.div`
   }
 
   > div a,
+  > div .favorite-wp,
   > div .cart-wp {
     background: transparent;
     border: 0;

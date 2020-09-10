@@ -28,6 +28,11 @@ export const Container = styled.div`
     z-index: 123;
   }
 
+  &.act {
+    opacity: 1;
+    visibility: visible;
+  }
+
   li {
     list-style: none;
     display: flex;
@@ -81,39 +86,6 @@ export const ListProduct = styled.div`
   }
 `;
 
-export const Total = styled.div`
-  margin-top: 20px;
-  border-top: 1px solid #f1f1f1;
-  padding-top: 20px;
-
-  > span {
-    text-transform: uppercase;
-    font-size: 20px;
-    font-weight: bold;
-    display: block;
-    color: #5d5d5d;
-    text-align: center;
-
-    > strong {
-      color: #002357;
-      font-weight: bold;
-    }
-  }
-
-  .view-cart {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e2c30a;
-    text-transform: uppercase;
-    margin-top: 20px;
-    color: #002357;
-    font-weight: 600;
-  }
-`;
-
 export const Product = styled.div`
   display: flex;
   align-items: center;
@@ -130,11 +102,6 @@ export const Product = styled.div`
     padding-right: 15px;
     display: inline-block;
   }
-`;
-
-export const Price = styled.div`
-  font-weight: 600;
-  color: #353535;
 `;
 
 export const ButtonTrash = styled.button`

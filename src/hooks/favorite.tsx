@@ -17,6 +17,7 @@ interface IImagesProduct {
 interface IProduct {
   id: string;
   name: string;
+  slug: string;
   quantity: number;
   images_product: IImagesProduct[];
   price: number;

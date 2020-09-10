@@ -7,6 +7,7 @@ import { useAuth } from '../../../hooks/auth';
 import { useCart } from '../../../hooks/cart';
 
 import CartFloatUp from '../../CartFloatUp';
+import FavoriteFloatUp from '../../FavoriteFloatUp';
 
 import logoImg from '../../../assets/logo_fundo_azul.svg';
 
@@ -30,8 +31,12 @@ const Header: React.FC = () => {
     });
   }
 
+  const favoriteFloatUpDisplay = useCallback(() => {
+    $('.favorite-float').toggleClass('act');
+  }, []);
+
   const cartFloatUpDisplay = useCallback(() => {
-    $('.cart-float-up').toggleClass('act');
+    $('.cart-float').toggleClass('act');
   }, []);
 
   return (
@@ -45,12 +50,17 @@ const Header: React.FC = () => {
           <Nav />
 
           <HeadNav>
-            <div>
-              <Link to="/wish">
+            <div className="favorite-float">
+              <button
+                type="button"
+                className="favorite-wp"
+                onClick={() => favoriteFloatUpDisplay()}
+              >
                 <FaHeart size={26} />
-              </Link>
+              </button>
+              <FavoriteFloatUp />
             </div>
-            <div>
+            <div className="cart-float">
               <button
                 type="button"
                 className="cart-wp"

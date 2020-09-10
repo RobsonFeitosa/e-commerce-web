@@ -3,19 +3,19 @@ import { FaTimesCircle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
 
-import { useCart } from '../../hooks/cart';
+import { useFavorite } from '../../hooks/favorite';
 import iconSleep from '../../assets/icon-sleep.svg';
 import imgFile from '../../assets/file-image-product.svg';
 import formatValue from '../../utils/formatValue';
+
+import { useAuth } from '../../hooks/auth';
 
 import {
   Container,
   Title,
   Content,
   ListProduct,
-  Total,
   Product,
-  Price,
   ButtonTrash,
 } from './styles';
 
@@ -30,6 +30,7 @@ interface IImagesProduct {
 interface IProduct {
   id: string;
   name: string;
+  slug: string;
   quantity: number;
   images_product: IImagesProduct[];
   price: number;
@@ -37,8 +38,10 @@ interface IProduct {
   description: string;
 }
 
-const CartFloatUp: React.FC = () => {
-  const { remove, products } = useCart();
+const FavoriteFloatUp: React.FC = () => {
+  const { remove, favorites } = useFavorite();
+
+  const { customer } = useAuth();
 
   const imageWhitoutFeatured = useCallback((arr) => {
     const ar = arr.reduce((accumulate: any, image: any) => {
@@ -48,75 +51,75 @@ const CartFloatUp: React.FC = () => {
     return ar;
   }, []);
 
-  const cartSubTotal = useMemo(() => {
-    const total = products.reduce((accumulator, product) => {
-      const productsSubtotal = product.price * product.quantity;
+  const favoriteSubTotal = useMemo(() => {
+    const total = favorites.reduce((accumulator, favorite) => {
+      const favoritesSubtotal = favorite.price * favorite.quantity;
 
-      return accumulator + productsSubtotal;
+      return accumulator + favoritesSubtotal;
     }, 0);
 
     return formatValue(total);
-  }, [products]);
+  }, [favorites]);
 
-  const totalItensInCart = useMemo(() => {
-    const total = products.reduce((accumulator, product) => {
-      const productsQuantity = product.quantity;
+  const totalItensInFavorite = useMemo(() => {
+    const total = favorites.reduce((accumulator, favorite) => {
+      const favoritesQuantity = favorite.quantity;
 
-      return accumulator + productsQuantity;
+      return accumulator + favoritesQuantity;
     }, 0);
 
     return total;
-  }, [products]);
+  }, [favorites]);
 
-  const handleRemoveCartFloat = useCallback(
+  const handleRemoveFavoriteFloat = useCallback(
     (id: string) => {
       remove(id);
 
-      if (totalItensInCart === 1) {
+      if (totalItensInFavorite === 1) {
         setTimeout(() => {
-          $('.cart-float').removeClass('act');
+          $('.favorite-float').removeClass('act');
         }, 3000);
       }
     },
-    [remove, totalItensInCart]
+    [remove, totalItensInFavorite]
   );
 
   return (
     <>
-      <Container className="cart-float-up">
-        {products.length === 0 ? (
+      <Container className="favorite-float-up">
+        {favorites.length === 0 ? (
           <div className="without-product">
-            <Title>Carrinho</Title>
+            <Title>Favoritos</Title>
             <div>
               <img src={iconSleep} alt="" />
             </div>
-            <strong>Seu carrinho está vazio</strong>
+            <strong>Nenhum item adicionado</strong>
           </div>
         ) : (
           <div>
             <Title>
-              {totalItensInCart} ite{totalItensInCart > 1 ? 'ns' : 'm'}{' '}
-              adicionado em seu carrinho
+              {totalItensInFavorite} favorito
+              {totalItensInFavorite > 1 ? 's' : ''}
             </Title>
             <Content>
               <ListProduct>
                 <ul
                   className={
-                    products.length && products.length > 4 ? 'scroll-y' : ''
+                    favorites.length && favorites.length > 4 ? 'scroll-y' : ''
                   }
                 >
-                  {products.map((product) => {
+                  {favorites.map((favorite) => {
                     const notFeatured = imageWhitoutFeatured(
-                      product.images_product
+                      favorite.images_product
                     );
                     return (
-                      <li key={product.id}>
+                      <li key={favorite.id}>
                         <Product>
                           <div>
-                            {product.images_product.length === 0 && (
+                            {favorite.images_product.length === 0 && (
                               <img src={imgFile} alt="no-exist-file" />
                             )}
-                            {product.images_product.map(
+                            {favorite.images_product.map(
                               (image) =>
                                 image.featured === 1 && (
                                   <img
@@ -127,26 +130,29 @@ const CartFloatUp: React.FC = () => {
                                 )
                             )}
                             {notFeatured !== 0 &&
-                              notFeatured === product.images_product.length && (
+                              notFeatured ===
+                                favorite.images_product.length && (
                                 <img
-                                  src={product.images_product[0].picture_url}
+                                  src={favorite.images_product[0].picture_url}
                                   alt="Produto"
                                 />
                               )}
                           </div>
                           <div>
-                            <p>{product.name}</p>
-                            <div>
-                              <Price>
-                                <span>{product.quantity} x </span>
-                                {formatValue(product.price)}
-                              </Price>
-                            </div>
+                            <Link
+                              className="buttonBuy"
+                              to={{
+                                pathname: `/products/${favorite.slug}/${favorite.id}`,
+                                state: { id: favorite.id, slug: favorite.slug },
+                              }}
+                            >
+                              <p>{favorite.name}</p>
+                            </Link>
                           </div>
                         </Product>
 
                         <ButtonTrash
-                          onClick={() => handleRemoveCartFloat(product.id)}
+                          onClick={() => handleRemoveFavoriteFloat(favorite.id)}
                         >
                           <FaTimesCircle size={16} />
                         </ButtonTrash>
@@ -155,14 +161,12 @@ const CartFloatUp: React.FC = () => {
                   })}
                 </ul>
               </ListProduct>
-              <Total>
-                <span>
-                  SUBTOTAL: <strong>{cartSubTotal}</strong>
-                </span>
-                <Link to="/cart" className="view-cart">
-                  Ver meu carrinho
+
+              {customer && (
+                <Link to="/wish" className="view-wish">
+                  Meus desejos
                 </Link>
-              </Total>
+              )}
             </Content>
           </div>
         )}
@@ -171,4 +175,4 @@ const CartFloatUp: React.FC = () => {
   );
 };
 
-export default CartFloatUp;
+export default FavoriteFloatUp;
